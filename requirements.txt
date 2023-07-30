@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+gunicorn
+pandas
+numpy
+scipy
+python-multipart
+pydantic
+pyxirr
