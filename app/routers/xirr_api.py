@@ -14,9 +14,11 @@ def calculate_xirr(transactions: List[Transaction], caller_id=None):
 
     print(df)
 
-    df.to_csv(f"tmp/xirr-{caller_id}.csv", encoding='utf-8')
-
-    xirr_val = xirr(df['date'], df['amount'], silent=False)
+    if df.empty:
+        xirr_val = 0
+    else:
+        df.to_csv(f"tmp/xirr-{caller_id}.csv", encoding='utf-8')    
+        xirr_val = xirr(df['date'], df['amount'], silent=False) 
     print(f"xirr_val = {xirr_val}")
 
     return xirr_val or 0
