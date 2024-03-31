@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 import pandas as pd
 import numpy as np
 from scipy.optimize import bisect, newton
@@ -6,6 +6,7 @@ from ..models.models import Transaction
 from typing import List
 from pyxirr import xirr
 from datetime import date, datetime
+from ..services.excel_merger import ExcelMerger
 
 
 router = APIRouter()
@@ -55,6 +56,20 @@ def calculate_xirr_old(transactions: List[Transaction], algo="newton"):
 @router.get("/")
 async def root():
     return {"message": "Hello Xirr"}
+
+# Sample request: http://localhost:8000/merge_xl?template_path=data/template.xlsx&data_path=data/data.xlsx&output_path=data/merged.xlsx
+@router.get("/merge_xl")
+async def merge_xl(template_path: str, data_path: str, output_path: str):
+    try:
+        xl_merger = ExcelMerger(template_path, data_path, output_path)
+        xl_merger.copy_formulas_and_data()
+        return {"message": "Merge completed successfully."}
+    except FileNotFoundError as e:
+        # Return a 404 Not Found response if a file is not found
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        # Handle other unexpected errors, returning a 500 Internal Server Error
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
 @router.post("/calculate_xirr")
 async def calculate(transactions: List[Transaction], caller_id=None):
