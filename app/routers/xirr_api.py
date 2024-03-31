@@ -58,7 +58,7 @@ async def root():
     return {"message": "Hello Xirr"}
 
 # Sample request: http://localhost:8000/merge_xl?template_path=data/template.xlsx&data_path=data/data.xlsx&output_path=data/merged.xlsx
-@router.get("/merge_xl")
+@router.post("/merge_xl")
 async def merge_xl(template_path: str, data_path: str, output_path: str):
     try:
         xl_merger = ExcelMerger(template_path, data_path, output_path)
