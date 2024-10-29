@@ -6,14 +6,14 @@ from htmldocx import HtmlToDocx
 from ..services.s3_prompt_builder import S3PromptBuilder
 
 class ReportGenerator:    
-    def __init__(self, file_paths, template_path):
+    def __init__(self, api_key, file_paths, template_path):
         """
         Initialize the ReportGenerator with paths to input files and the API key.
 
         :param file_urls: signed links to the files in S3. Sent by the rails job
         :param template_html: Path to the HTML template file.
         """
-        self.api_key = os.getenv('OPENAI_API_KEY')
+        self.api_key = api_key
         
         if not self.api_key:
             raise ValueError("API key not found. Set the OPENAI_API_KEY environment variable.")

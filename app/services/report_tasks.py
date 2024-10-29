@@ -16,7 +16,7 @@ def download_file(url: str, save_path: str):
     with open(save_path, 'wb') as f:
         f.write(response.content)
 
-def generate_report_task(file_urls, template_html_url, request_id):
+def generate_report_task(api_key, file_urls, template_html_url, request_id):
     """
     Background task to generate a report based on provided file URLs and a template URL.
     """
@@ -50,7 +50,7 @@ def generate_report_task(file_urls, template_html_url, request_id):
 
     # Run ReportGenerator
     print("Running ReportGenerator...")
-    report_generator = ReportGenerator(file_paths, str(template_path))
+    report_generator = ReportGenerator(api_key, file_paths, str(template_path))
     try:
         report_generator.save_summary_to_file(output_path)
     except Exception as e:

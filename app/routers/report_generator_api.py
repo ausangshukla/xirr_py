@@ -9,6 +9,7 @@ from ..services.report_tasks import generate_report_task
 router = APIRouter()
 
 class ReportRequest(BaseModel):
+    api_key: str
     file_urls: List[str]
     template_html_url: str
 
@@ -27,6 +28,7 @@ def generate_report(request: ReportRequest, background_tasks: BackgroundTasks):
     # Launch the background task
     background_tasks.add_task(
         generate_report_task,
+        request.api_key,
         request.file_urls,
         request.template_html_url,
         request_id
