@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{Company Name} Presentation</title>
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            font-size: 44px;
+            color: #71aeec;
+            border-bottom: 4px solid #003366;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 30px;
+            margin-top: 30px;
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #8094f9;
+            color: #fff;
+            text-align: left;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+        .highlight {
+            background-color: #e9f7ff;
+            font-weight: bold;
+        }
+        /* Styling for lists */
+        .recent-highlights, .references {
+            margin-top: 30px;
+        }
+        .recent-highlights ul, .references ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+        }
+        .recent-highlights li, .references li {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        /* Button Styles */
+        .cta-button {
+            display: inline-block;
+            background-color: #003366;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        .cta-button:hover {
+            background-color: #002244;
+        }
+        /* References Section */
+        .references h2 {
+            border-bottom: 2px solid #003366;
+            color: #003366;
+        }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 34px;
+            }
+            h2 {
+                font-size: 26px;
+            }
+            h3 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{Company Name}</h1>
+        
+        <h2>Company Overview</h2>
+        <table>
+            <tr>
+                <th>Company Name</th>
+                <td>{Company Name}</td>
+            </tr>
+            <tr>
+                <th>Sector</th>
+                <td>Financial analytics / cashflow management</td>
+            </tr>
+            <tr>
+                <th>Product</th>
+                <td>{Product Description}</td>
+            </tr>
+        </table>
+
+        <h2>Investment Summary</h2>
+        <table>
+            <tr>
+                <th>Date of First Investment</th>
+                <td>{Date of Investment}</td>
+            </tr>
+            <tr>
+                <th>Aggregate Investment</th>
+                <td>{Amount of Investment}</td>
+            </tr>
+            <tr>
+                <th>Investment Type</th>
+                <td>{Type of Investment}</td>
+            </tr>
+        </table>
+
+        <h2>Financial Summary (Rs million)</h2>
+        <table>
+            <tr>
+                <th>Metrics</th>
+                <th>Jan-Mar '22 (Quarter)</th>
+                <th>Jan-Mar '21 (Quarter)</th>
+                <th>FY 22-23 (Annual)</th>
+                <th>FY 21-22 (Annual)</th>
+            </tr>
+            <tr>
+                <td class="highlight">No. of Orders</td>
+                <td>{Jan-Mar 22 Orders}</td>
+                <td>{Jan-Mar 21 Orders}</td>
+                <td>{FY 22-23 Orders}</td>
+                <td>{FY 21-22 Orders}</td>
+            </tr>
+            <tr>
+                <td class="highlight">Revenue</td>
+                <td>{Jan-Mar 22 Revenue}</td>
+                <td>{Jan-Mar 21 Revenue}</td>
+                <td>{FY 22-23 Revenue}</td>
+                <td>{FY 21-22 Revenue}</td>
+            </tr>
+            <tr>
+                <td class="highlight">Contribution</td>
+                <td>{Jan-Mar 22 Contribution}</td>
+                <td>{Jan-Mar 21 Contribution}</td>
+                <td>{FY 22-23 Contribution}</td>
+                <td>{FY 21-22 Contribution}</td>
+            </tr>
+            <tr>
+                <td class="highlight">EBITDA</td>
+                <td>{Jan-Mar 22 EBITDA}</td>
+                <td>{Jan-Mar 21 EBITDA}</td>
+                <td>{FY 22-23 EBITDA}</td>
+                <td>{FY 21-22 EBITDA}</td>
+            </tr>
+        </table>
+
+        <div class="recent-highlights">
+            <h2>Recent Highlights</h2>
+            <ul>
+                <li>{Highlight 1}</li>
+                <li>{Highlight 2}</li>
+                <li>{More highlights}</li>
+            </ul>
+        </div>
+
+        <div class="recent-highlights">
+            <h2>Key Points From Investor Presentation:</h2>
+            <ul>
+                <li>{point 1}</li>
+                <li>{point 2}</li>
+                <li>{And more ...}</li>
+            </ul>
+        </div>
+
+
+        <a href="#" class="cta-button">Learn More About {Company Name}</a>
+    </div>
+</body>
+</html>

@@ -8,3 +8,7 @@ python-multipart
 pydantic
 pyxirr
 openpyxl
+pymupdf
+openai
+htmldocx
+requests
