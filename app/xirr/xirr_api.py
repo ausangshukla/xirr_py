@@ -6,7 +6,7 @@ from ..models.models import Transaction
 from typing import List
 from pyxirr import xirr
 from datetime import date, datetime
-from ..services.excel_merger import ExcelMerger
+from .excel_merger import ExcelMerger
 
 
 router = APIRouter()

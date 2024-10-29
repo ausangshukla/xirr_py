@@ -4,7 +4,7 @@ import os
 import uuid
 import requests
 from pathlib import Path
-from ..services.report_generator import ReportGenerator
+from .report_generator import ReportGenerator
 
 def download_file(url: str, save_path: str):
     """

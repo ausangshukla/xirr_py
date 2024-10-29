@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from .routers import xirr_api, report_generator_api
+
+from .report_generator import report_generator_api
+from .xirr import xirr_api
 
 app = FastAPI()
 

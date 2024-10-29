@@ -4,7 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 from typing import List
 from pathlib import Path
-from ..services.report_tasks import generate_report_task
+from .report_tasks import generate_report_task
 
 router = APIRouter()
 
