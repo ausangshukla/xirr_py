@@ -35,7 +35,7 @@ def generate_report(request: ReportRequest, background_tasks: BackgroundTasks):
     )
 
     # Return immediately to the client with the request ID
-    results_folder = Path(f"results/{request_id}")
+    results_folder = Path(f"/tmp/report_generator/{request_id}")
     return {
         "message": "Report generation started",
         "request_id": request_id,

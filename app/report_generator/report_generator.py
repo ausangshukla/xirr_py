@@ -1,9 +1,17 @@
 # ReportGenerator.py
 
-import os
+import logging
 from openai import OpenAI
 from htmldocx import HtmlToDocx
 from .s3_prompt_builder import S3PromptBuilder
+
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,  # Change to DEBUG for more verbosity
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 class ReportGenerator:    
     def __init__(self, api_key, file_paths, template_path):
@@ -39,13 +47,13 @@ class ReportGenerator:
 
         client = OpenAI(api_key=self.api_key)
 
-        print("Sending data to llm...")
+        logger.debug("Sending data to llm...")
         response = client.chat.completions.create(
             messages=self.context,
             model="gpt-4o",
         )
 
-        print("Received response from llm...")
+        logger.debug("Received response from llm...")
         answer = response.choices[0].message.content
         return answer
 
@@ -55,7 +63,7 @@ class ReportGenerator:
         
         :param output_path: Path to save the output report file.
         """
-        print(f"Generating summary and saving to '{output_path}'...")
+        logger.debug(f"Generating summary and saving to '{output_path}'...")
         summary = self.generate_summary()
         with open(output_path, "w") as f:
             f.write(summary)
@@ -64,8 +72,8 @@ class ReportGenerator:
         new_parser = HtmlToDocx()
         new_parser.parse_html_file(output_path, f"{output_path}")
 
-        print(f"Summary has been generated and saved to '{output_path}'.")
-        print(f"Summary has been converted to DOCX format and saved to '{output_path}.docx'.")
+        logger.debug(f"Summary has been generated and saved to '{output_path}'.")
+        logger.debug(f"Summary has been converted to DOCX format and saved to '{output_path}.docx'.")
 # Example usage
 if __name__ == "__main__":
     # Load OpenAI API key from environment variable
