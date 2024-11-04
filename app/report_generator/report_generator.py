@@ -29,7 +29,7 @@ class ReportGenerator:
         self.prompt_builder = S3PromptBuilder(file_paths, template_path)
 
         self.context = [
-            {"role": "system", "content": "You are an assistant that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a summary based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Retain the css styles in the report. Do not add any ```html or ```css tags to start of the report."}
+            {"role": "system", "content": "You are an assistant that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a summary based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retail the <head> tags with styles, and ensure the result is well formed html. Retain the css styles in the report. Do not add any ```html or ```css tags to start of the report."}
         ]
 
     def initialize_conversation_context(self):
