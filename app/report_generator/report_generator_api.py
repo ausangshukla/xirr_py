@@ -12,6 +12,7 @@ class ReportRequest(BaseModel):
     api_key: str
     file_urls: List[str]
     template_html_url: str
+    output_file_name: str
 
 @router.post("/generate-report/")
 def generate_report(request: ReportRequest, background_tasks: BackgroundTasks):
@@ -31,6 +32,7 @@ def generate_report(request: ReportRequest, background_tasks: BackgroundTasks):
         request.api_key,
         request.file_urls,
         request.template_html_url,
+        request.output_file_name,
         request_id
     )
 

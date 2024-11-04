@@ -25,7 +25,7 @@ def download_file(url: str, save_path: str):
     with open(save_path, 'wb') as f:
         f.write(response.content)
 
-def generate_report_task(api_key, file_urls, template_html_url, request_id):
+def generate_report_task(api_key, file_urls, template_html_url, output_file_name, request_id):
     """
     Background task to generate a report based on provided file URLs and a template URL.
     """
@@ -35,7 +35,7 @@ def generate_report_task(api_key, file_urls, template_html_url, request_id):
 
     # Define paths for temporary files
     template_path = results_folder / "template.html"
-    output_path = results_folder / "output_report.html"
+    output_path = results_folder / output_file_name
 
     # Download the HTML template
     try:
