@@ -12,3 +12,11 @@ pymupdf
 openai
 htmldocx
 requests
+boto3
+langchain
+langchain-openai 
+langchain-core
+langchain-aws
+langchain-community
+langchain-anthropic
+aiohttp

@@ -3,7 +3,7 @@
 import requests
 import os
 import fitz  # PyMuPDF
-
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 class S3PromptBuilder:
     def __init__(self, file_paths, template_path, download_dir="downloads"):
         """
@@ -67,6 +67,31 @@ class S3PromptBuilder:
             html_content = file.read()
         return f"<Report Template Start>{html_content}<Report Template End>"
 
+    def create_prompt(self) -> ChatPromptTemplate:
+        
+        """Create a structured prompt using LangChain's prompt templates."""
+        system_template = """You are an assistant that generates reports based on provided documents. 
+        Your task is to analyze the documents and create a summary following the provided template format.
+        Maintain all HTML structure and CSS styles from the template. Do not add markdown code blocks."""
+
+        human_template = """Please analyze the following documents and generate a report using the template format:
+
+        Documents:
+        {documents}
+
+        Template:
+        {template}
+
+        Generate a complete report while preserving the template's HTML structure and styles."""
+
+        prompt = ChatPromptTemplate.from_messages([
+            SystemMessagePromptTemplate.from_template(system_template),
+            HumanMessagePromptTemplate.from_template(human_template)
+        ])
+
+        return prompt
+
+
     def build_prompt(self):
         """
         Builds the prompt by downloading the files from the URLs, extracting their content, and adding the HTML template.
@@ -89,3 +114,19 @@ class S3PromptBuilder:
 
         # Combine all texts into a single prompt
         return "".join(all_texts)
+    
+    def documents(self):
+        all_texts = []
+
+        # Download each file from the URLs, extract text, and label them as File1, File2, etc.
+        for index, file_path in enumerate(self.file_paths):
+            file_text = self.extract_text_from_pdf(file_path)
+
+            # Label the file generically as File1, File2, etc.
+            file_label = f"File{index + 1}"
+            all_texts.append(f"<{file_label} Start>{file_text}<{file_label} End>")
+
+        return "".join(all_texts)
+    
+    def template(self):
+        return self.read_html_template()
