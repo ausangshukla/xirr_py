@@ -70,9 +70,7 @@ class S3PromptBuilder:
     def create_prompt(self) -> ChatPromptTemplate:
         
         """Create a structured prompt using LangChain's prompt templates."""
-        system_template = """You are an assistant that generates reports based on provided documents. 
-        Your task is to analyze the documents and create a summary following the provided template format.
-        Maintain all HTML structure and CSS styles from the template. Do not add markdown code blocks."""
+        system_template = """You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retail the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."""
 
         human_template = """Please analyze the following documents and generate a report using the template format:
 

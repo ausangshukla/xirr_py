@@ -49,7 +49,7 @@ class ReportGenerator:
         # Initialize models
         self.openai_model = ChatOpenAI(
             api_key=api_key,
-            model="gpt-4",
+            model="gpt-4o",
             temperature=0
         )
         
@@ -78,7 +78,7 @@ class ReportGenerator:
         )
 
         self.context = [
-            {"role": "system", "content": "You are an assistant that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a summary based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retail the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."}
+            {"role": "system", "content": "You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retail the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."}
         ]
 
     def generate_report(self, model_type: str = "openai") -> str:
@@ -136,7 +136,7 @@ class ReportGenerator:
 
         # Convert the HTML report to DOCX
         new_parser = HtmlToDocx()
-        new_parser.parse_html_file(output_path, f"{output_path}.docx")
+        new_parser.parse_html_file(output_path, f"{output_path}")
 
         logger.debug(f"Summary has been generated and saved to '{output_path}'.")
         logger.debug(f"Summary has been converted to DOCX format and saved to '{output_path}.docx'.")
