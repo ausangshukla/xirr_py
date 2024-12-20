@@ -26,7 +26,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class ReportGenerator:    
-    def __init__(self, api_key, anthropic_api_key, file_paths, template_path):
+    def __init__(self, api_key, anthropic_api_key, file_paths, template_path, additional_data):
         """
         Initialize the ReportGenerator with paths to input files and API keys.
 
@@ -44,7 +44,7 @@ class ReportGenerator:
         if not self.anthropic_api_key:
             raise ValueError("Anthropic API key not found.")
         
-        self.prompt_builder = S3PromptBuilder(file_paths, template_path)
+        self.prompt_builder = S3PromptBuilder(file_paths, template_path, additional_data)
 
         # Initialize models
         self.openai_model = ChatOpenAI(
@@ -78,7 +78,7 @@ class ReportGenerator:
         )
 
         self.context = [
-            {"role": "system", "content": "You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retail the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."}
+            {"role": "system", "content": "You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retain the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."}
         ]
 
     def generate_report(self, model_type: str = "openai") -> str:
@@ -111,7 +111,8 @@ class ReportGenerator:
             logger.debug(f"Generating report using {model_type}...")
             response = chain.invoke({
                 "documents": self.prompt_builder.documents(),
-                "template": self.prompt_builder.template()
+                "template": self.prompt_builder.template(),
+                "additional_data": self.prompt_builder.additional_data_value()
             })
 
             return response.content

@@ -14,6 +14,7 @@ class ReportRequest(BaseModel):
     file_urls: List[str]
     template_html_url: str
     output_file_name: str
+    additional_data: str
 
 @router.post("/generate-report/")
 def generate_report(request: ReportRequest, background_tasks: BackgroundTasks):
@@ -26,6 +27,7 @@ def generate_report(request: ReportRequest, background_tasks: BackgroundTasks):
     print(f"Received a new report generation request with ID: {request_id}")
     print(f"Files: {request.file_urls}")
     print(f"Template: {request.template_html_url}")
+    print(f"Additional Data: {request.additional_data}")
 
     # Launch the background task
     background_tasks.add_task(
@@ -34,6 +36,7 @@ def generate_report(request: ReportRequest, background_tasks: BackgroundTasks):
         request.anthropic_api_key,
         request.file_urls,
         request.template_html_url,
+        request.additional_data,
         request.output_file_name,
         request_id
     )

@@ -25,7 +25,7 @@ def download_file(url: str, save_path: str):
     with open(save_path, 'wb') as f:
         f.write(response.content)
 
-def generate_report_task(openai_api_key, anthropic_api_key, file_urls, template_html_url, output_file_name, request_id):
+def generate_report_task(openai_api_key, anthropic_api_key, file_urls, template_html_url, additional_data, output_file_name, request_id):
     """
     Background task to generate a report based on provided file URLs and a template URL.
     """
@@ -59,7 +59,7 @@ def generate_report_task(openai_api_key, anthropic_api_key, file_urls, template_
 
     # Run ReportGenerator
     logger.debug("Running ReportGenerator...")
-    report_generator = ReportGenerator(openai_api_key, anthropic_api_key, file_paths, str(template_path))
+    report_generator = ReportGenerator(openai_api_key, anthropic_api_key, file_paths, str(template_path), additional_data)
     try:
         report_generator.save_summary_to_file(output_path, "openai")
     except Exception as e:

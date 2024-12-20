@@ -5,7 +5,7 @@ import os
 import fitz  # PyMuPDF
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 class S3PromptBuilder:
-    def __init__(self, file_paths, template_path, download_dir="downloads"):
+    def __init__(self, file_paths, template_path, additional_data, download_dir="downloads"):
         """
         Initialize the S3PromptBuilder with file URLs and an HTML template.
 
@@ -15,6 +15,7 @@ class S3PromptBuilder:
         """
         self.file_paths = file_paths
         self.template_path = template_path
+        self.additional_data = additional_data
         self.download_dir = download_dir
 
         # Create the download directory if it does not exist
@@ -70,12 +71,15 @@ class S3PromptBuilder:
     def create_prompt(self) -> ChatPromptTemplate:
         
         """Create a structured prompt using LangChain's prompt templates."""
-        system_template = """You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retail the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."""
+        system_template = """You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retain the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."""
 
         human_template = """Please analyze the following documents and generate a report using the template format:
 
         Documents:
         {documents}
+
+        Additional Data:
+        {additional_data}
 
         Template:
         {template}
@@ -128,3 +132,6 @@ class S3PromptBuilder:
     
     def template(self):
         return self.read_html_template()
+    
+    def additional_data_value(self):
+        return f"<Additional Data Start>{self.additional_data}<Additional Data End>"
