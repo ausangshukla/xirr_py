@@ -26,7 +26,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class ReportGenerator:    
-    def __init__(self, api_key, anthropic_api_key, file_paths, template_path, additional_data):
+    def __init__(self, api_key, anthropic_api_key, file_paths, template_path, additional_data, format: str = "html"):
         """
         Initialize the ReportGenerator with paths to input files and API keys.
 
@@ -77,9 +77,14 @@ class ReportGenerator:
             }
         )
 
-        self.context = [
-            {"role": "system", "content": "You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retain the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."}
-        ]
+        if format == "html":
+            self.context = [
+                {"role": "system", "content": "You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retain the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."}
+            ]
+        elif format == "json":
+            self.context = [
+                {"role": "system", "content": "You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retain the JSON structure of the template. Do not add content outside the JSON structure. Do not add any ```json tags to start of the report."}
+            ]
 
     def generate_report(self, model_type: str = "openai") -> str:
         """

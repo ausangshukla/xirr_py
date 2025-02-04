@@ -7,10 +7,10 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 class S3PromptBuilder:
     def __init__(self, file_paths, template_path, additional_data, download_dir="downloads"):
         """
-        Initialize the S3PromptBuilder with file URLs and an HTML template.
+        Initialize the S3PromptBuilder with file URLs and an HTML / JSON template.
 
         :param file_paths: List of file URLs.
-        :param template_path: Path to the HTML template file.
+        :param template_path: Path to the HTML / JSON template file.
         :param download_dir: Directory where the files will be downloaded.
         """
         self.file_paths = file_paths
@@ -56,22 +56,28 @@ class S3PromptBuilder:
 
         return pdf_text
 
-    def read_html_template(self):
+    def read_response_template(self):
         """
-        Reads the contents of the HTML template file and returns it as a string.
+        Reads the contents of the HTML/JSON template file and returns it as a string.
         
-        :return: A string containing the HTML content.
+        :return: A string containing the HTML/JSON content.
         """
 
     
         with open(self.template_path, 'r', encoding='utf-8') as file:
-            html_content = file.read()
-        return f"<Report Template Start>{html_content}<Report Template End>"
+            response_content = file.read()
+        return f"<Report Template Start>{response_content}<Report Template End>"
 
-    def create_prompt(self) -> ChatPromptTemplate:
-        
+    def create_prompt(self, format: str = "html") -> ChatPromptTemplate:
+
+
         """Create a structured prompt using LangChain's prompt templates."""
-        system_template = """You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retain the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."""
+
+        if format == "html":            
+            system_template = """You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retain the <head> tags with styles, and ensure the result is well formed html. Do not add content outside the html tags. Do not modify or overwrite the css styles in the report. Do not add any ```html or ```css tags to start of the report."""
+        elif format == "json":
+            system_template = """You are a financial analyst that answers questions based on the provided documents. The documents are attached with <Filename Start> and <Filename End> tags. Your role is to generate a report based on the extracted information and put it into the report template format supplied in the <Report Template Start> <Report Template End> tags. Please retain the JSON structure of the template. Do not add content outside the JSON structure. Do not add any ```json tags to start of the report."""
+        
 
         human_template = """Please analyze the following documents and generate a report using the template format:
 
@@ -84,7 +90,7 @@ class S3PromptBuilder:
         Template:
         {template}
 
-        Generate a complete report while preserving the template's HTML structure and styles."""
+        Generate a complete report while preserving the template's HTML / JSON structure and styles."""
 
         prompt = ChatPromptTemplate.from_messages([
             SystemMessagePromptTemplate.from_template(system_template),
@@ -96,7 +102,7 @@ class S3PromptBuilder:
 
     def build_prompt(self):
         """
-        Builds the prompt by downloading the files from the URLs, extracting their content, and adding the HTML template.
+        Builds the prompt by downloading the files from the URLs, extracting their content, and adding the HTML / JSON template.
         
         :return: A string containing the combined prompt.
         """
@@ -110,8 +116,8 @@ class S3PromptBuilder:
             file_label = f"File{index + 1}"
             all_texts.append(f"<{file_label} Start>{file_text}<{file_label} End>")
 
-        # Read the HTML template
-        template = self.read_html_template()
+        # Read the HTML / JSON template
+        template = self.read_response_template()
         all_texts.append(template)
 
         # Combine all texts into a single prompt
@@ -131,7 +137,7 @@ class S3PromptBuilder:
         return "".join(all_texts)
     
     def template(self):
-        return self.read_html_template()
+        return self.read_response_template()
     
     def additional_data_value(self):
         return f"<Additional Data Start>{self.additional_data}<Additional Data End>"
