@@ -1,0 +1,23 @@
+{% if section.tabular_data and section.tabular_data is mapping and section.tabular_data.rows %}
+    <h3 class="text-secondary mt-4">{{ section.tabular_data.title }}</h3>
+    <div class="table-responsive mb-5">
+        <table class="table table-striped table-hover table-bordered shadow-sm rounded-3 overflow-hidden">
+            <thead class="table-dark">
+                <tr>
+                    {% for header in section.tabular_data.rows[0].keys() %}
+                        <th scope="col">{{ header }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in section.tabular_data.rows %}
+                    <tr>
+                        {% for key, value in row.items() %}
+                            <td>{{ value if value is not none else '' }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}

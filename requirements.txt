@@ -13,10 +13,15 @@ openai
 htmldocx
 requests
 boto3
+langgraph
 langchain
 langchain-openai 
 langchain-core
 langchain-aws
 langchain-community
 langchain-anthropic
+langchain_google_genai
 aiohttp
+PyPDF2
+Jinja2
+markdown

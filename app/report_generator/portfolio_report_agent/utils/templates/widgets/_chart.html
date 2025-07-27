@@ -1,0 +1,96 @@
+{% if widget.data and widget.type != 'textual_description' %}
+    <h3 class="text-secondary mt-4">{{ widget.title }}</h3>
+    <div class="card mb-5 shadow-sm chart-container">
+        <div class="card-body">
+            <canvas id="chart-{{ section_index }}-{{ section.name | replace(' ', '-') }}-{{ chart_loop_index }}"></canvas>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('chart-{{ section_index }}-{{ section.name | replace(' ', '-') }}-{{ chart_loop_index }}').getContext('2d');
+            var chartData = {{ widget.data | tojson }};
+            var chartType = "{{ widget.type }}";
+            new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "{{ widget.title }}",
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            color: '#34495e' // text-color
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#7f8c8d' // light-text-color
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#7f8c8d', // light-text-color
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#7f8c8d', // light-text-color
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        'y-axis-1': { // For primary Y-axis
+                            type: 'linear',
+                            position: 'left',
+                            ticks: {
+                                color: '#3498db', // secondary-color
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false, // Only draw grid lines for the first Y-axis
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        'y-axis-2': { // For secondary Y-axis (e.g., percentages)
+                            type: 'linear',
+                            position: 'right',
+                            ticks: {
+                                color: '#e74c3c', // accent-color
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false // Do not draw grid lines for the second Y-axis
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% elif widget.type == 'textual_description' %}
+    <h3 class="text-secondary mt-4">{{ widget.title }}</h3>
+    <p>{{ widget.data }}</p>
+{% endif %}
