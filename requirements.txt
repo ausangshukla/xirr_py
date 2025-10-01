@@ -15,7 +15,7 @@ requests
 boto3
 langgraph
 langchain
-langchain-openai 
+langchain-openai
 langchain-core
 langchain-aws
 langchain-community
@@ -25,3 +25,4 @@ aiohttp
 PyPDF2
 Jinja2
 markdown
+PyPDF2>=3.0.0
