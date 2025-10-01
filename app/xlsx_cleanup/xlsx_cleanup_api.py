@@ -100,47 +100,87 @@ def cleanup_xlsx(input_path: str, output_path: str):
 
 @router.post("/cleanup_xlsx")
 def cleanup_xlsx_endpoint(request: CleanupRequest):
+    """
+    FastAPI endpoint to clean up an uploaded XLSX file.
+
+    Steps:
+    1. Create a temporary working directory in /tmp.
+    2. Download the XLSX from S3 or signed URL.
+    3. Perform cleanup (remove hidden rows/cols, trim text, remove blank rows/cols, etc).
+    4. Upload the cleaned XLSX to a provided signed upload URL.
+    5. Always clean up temporary files in /tmp after processing.
+    """
     import logging
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("xlsx-cleanup")
+
+    tmpdir = tempfile.mkdtemp(prefix="xlsx_cleanup_")
+    download_path = os.path.join(tmpdir, "input.xlsx")
+    output_path = os.path.join(tmpdir, "cleaned.xlsx")
+
     try:
-        logger.info(f"Raw request model: {request.dict()}")
-        logger.info(f"Received cleanup request: s3_url={request.s3_url}, replace={request.replace}")
-        # Use a persistent /tmp directory for debugging instead of auto-cleanup
-        tmpdir = tempfile.mkdtemp(prefix="xlsx_cleanup_")
-        download_path = os.path.join(tmpdir, "input.xlsx")
-        output_path = os.path.join(tmpdir, "cleaned.xlsx")
-        logger.info(f"Temporary directory created (will persist for debugging): {tmpdir}")
-
-        try:
-            logger.info("Starting download_from_s3...")
-            download_from_s3(request.s3_url, download_path)
-            logger.info(f"Downloaded file saved at {download_path}")
-        except Exception as e:
-            logger.exception("Download from S3 failed")
-            raise
-
-        try:
-            logger.info("Starting cleanup_xlsx...")
-            cleanup_xlsx(download_path, output_path)
-            logger.info(f"Cleanup completed. Clean file saved at {output_path}")
-        except Exception as e:
-            logger.exception("Cleanup process failed")
-            raise
-
-        if not request.upload_url:
-            logger.error("upload_url not provided in request. Cannot upload cleaned file.")
-            raise HTTPException(status_code=400, detail="upload_url is required for upload")
-
-        # Upload via signed URL only
-        logger.info(f"Uploading cleaned file via presigned URL")
-        with open(output_path, "rb") as f:
-            put_resp = requests.put(request.upload_url, data=f)
-        if put_resp.status_code not in (200, 201):
-            logger.error(f"Upload via signed URL failed: {put_resp.status_code} {put_resp.text}")
-            raise HTTPException(status_code=500, detail="Upload via signed URL failed")
-        logger.info("Upload via signed URL complete.")
-        return {"cleaned_file_url": request.upload_url}
+        _log_request(logger, request)
+        _download_input(logger, request, download_path)
+        _perform_cleanup(logger, download_path, output_path)
+        cleaned_file_url = _upload_output(logger, request, output_path)
+        return {"cleaned_file_url": cleaned_file_url}
     except Exception as e:
         logger.exception("Cleanup endpoint failed with exception (traceback included)")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        _cleanup_tmpdir(logger, tmpdir)
+
+
+def _log_request(logger, request: CleanupRequest):
+    """Log the incoming request for debugging."""
+    logger.info(f"Raw request model: {request.dict()}")
+    logger.info(f"Received cleanup request: s3_url={request.s3_url}, replace={request.replace}")
+
+
+def _download_input(logger, request: CleanupRequest, download_path: str):
+    """Download XLSX file from S3 or signed URL."""
+    try:
+        logger.info("Starting download_from_s3...")
+        download_from_s3(request.s3_url, download_path)
+        logger.info(f"Downloaded file saved at {download_path}")
+    except Exception:
+        logger.exception("Download from S3 failed")
+        raise
+
+
+def _perform_cleanup(logger, download_path: str, output_path: str):
+    """Run cleanup transformations on the XLSX file."""
+    try:
+        logger.info("Starting cleanup_xlsx...")
+        cleanup_xlsx(download_path, output_path)
+        logger.info(f"Cleanup completed. Clean file saved at {output_path}")
+    except Exception:
+        logger.exception("Cleanup process failed")
+        raise
+
+
+def _upload_output(logger, request: CleanupRequest, output_path: str) -> str:
+    """Upload the cleaned XLSX via presigned URL."""
+    if not request.upload_url:
+        logger.error("upload_url not provided in request. Cannot upload cleaned file.")
+        raise HTTPException(status_code=400, detail="upload_url is required for upload")
+
+    logger.info("Uploading cleaned file via presigned URL")
+    with open(output_path, "rb") as f:
+        put_resp = requests.put(request.upload_url, data=f)
+    if put_resp.status_code not in (200, 201):
+        logger.error(f"Upload via signed URL failed: {put_resp.status_code} {put_resp.text}")
+        raise HTTPException(status_code=500, detail="Upload via signed URL failed")
+    logger.info("Upload via signed URL complete.")
+    return request.upload_url
+
+
+def _cleanup_tmpdir(logger, tmpdir: str):
+    """Remove the temporary working directory and all files created in /tmp."""
+    import shutil
+    try:
+        if os.path.exists(tmpdir):
+            shutil.rmtree(tmpdir, ignore_errors=True)
+            logger.info(f"Temporary directory {tmpdir} and its files have been deleted.")
+    except Exception as cleanup_err:
+        logger.warning(f"Failed to cleanup temporary directory {tmpdir}: {cleanup_err}")
