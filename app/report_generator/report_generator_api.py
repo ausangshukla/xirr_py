@@ -9,8 +9,10 @@ from .report_tasks import generate_report_task
 router = APIRouter()
 
 class ReportRequest(BaseModel):
-    gemini_api_key: str
+    openai_api_key: str
+    anthropic_api_key: str
     file_urls: List[str]
+    template_html_url: str
     output_file_name: str
     additional_data: str
 
@@ -24,13 +26,16 @@ def generate_report(request: ReportRequest, background_tasks: BackgroundTasks):
 
     print(f"Received a new report generation request with ID: {request_id}")
     print(f"Files: {request.file_urls}")
+    print(f"Template: {request.template_html_url}")
     print(f"Additional Data: {request.additional_data}")
 
     # Launch the background task
     background_tasks.add_task(
         generate_report_task,
-        request.gemini_api_key,
+        request.openai_api_key,
+        request.anthropic_api_key,
         request.file_urls,
+        request.template_html_url,
         request.additional_data,
         request.output_file_name,
         request_id
